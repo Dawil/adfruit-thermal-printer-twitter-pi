@@ -1,0 +1,39 @@
+<% tweet_line_length = 40 %>
+<% @tweet = @tweet.split(' ') %>
+<% tweet_lines_sum = @tweet.inject({ lines: [], current_line: ""}) do |sum,word|
+     if sum[:current_line].length + word.length > tweet_line_length
+       sum[:lines] << sum[:current_line] + ' '
+       sum[:current_line] = word
+     else
+       sum[:current_line] += word + ' '
+     end
+     sum
+   end 
+   tweet_lines = tweet_lines_sum[:lines] + [tweet_lines_sum[:current_line]]
+%>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1477 481.1">
+  <svg x="10" y="20">
+    <text transform="translate(6.509 61.762)" fill="#575656" font-family="Nimbus Sans L" font-size="70">
+      <%= @name %>
+    </text>
+    <text transform="translate(6.51 107.918)" fill="#575656" font-family="Nimbus Sans L" font-size="35">
+      @<%= @twittername %>
+    </text>
+    <text transform="translate(1244.325 39.29)" font-family="Nimbus Sans L" font-size="35">
+      <%= @date %>
+    </text>
+    <g fill="none" stroke="#000" stroke-width="3.5" stroke-miterlimit="10">
+      <path d="M1467 506v-7"/>
+      <path stroke-dasharray="13.6686,13.6686" d="M1467 485.3v-458"/>
+      <path d="M1467 20.6v-7"/>
+    </g>
+  </svg>
+  <svg x="10" y="60">
+    <text transform="translate(6.649 178.206)">
+      <% y_increment = 60; y = 0 - y_increment; for @tweet_line in tweet_lines %>
+        <tspan x="0" y="<%= y += y_increment %>" font-family="Droid Sans Mono" font-size="60"><%= @tweet_line %></tspan>
+      <% end %>
+    </text>
+  </svg>
+  <path fill="none" d="M6.6 128.5H1400V511H6.7z"/>
+</svg>
