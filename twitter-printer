@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Clear log file
+echo > /var/log/printer.log
+log()
+{
+  echo $* >> /var/log/printer.log
+}
+
+main() {
+
+log Starting up.
+# While not connected to BVN Guest
+while true;
+do
+  log Waiting for BVN Guest connection
+  sleep 5
+  /sbin/iwconfig | grep "BVN Guest" && break
+done
+
+log Connected to BVN Guest
+
+log Entering bvn-twitter-printer directory
+cd /home/pi/bvn-twitter-printer
+log pwd: `pwd`
+while true;
+do
+  log Running main.rb
+  ./main.rb >> /var/log/printer.log 2>&1
+  log Quit for some reason, exit status: $?
+  log Waiting 120 seconds...
+  sleep 120
+  log Done waiting.
+done
+
+}
+
+main

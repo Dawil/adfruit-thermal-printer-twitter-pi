@@ -4,11 +4,11 @@ require 'twitter'
 require 'erb'
 
 class TemplateScope
-  def initialize name, twittername, date, tweet
+  def initialize name, twittername, date, tweettext
     @name = name
     @twittername = twittername
     @date = date
-    @tweet = tweet
+    @tweettext = tweettext
   end
   def get_binding
     binding
@@ -27,14 +27,17 @@ client = Twitter::Streaming::Client.new do |c|
  c.access_token_secret = access_token_secret 
 end
 
-client.filter(track: 'futures forum test') do |tweet|
-  scope = TemplateScope.new(tweet.user.name, tweet.user.screen_name, tweet.created_at.getutc, tweet.full_text)
-  template = ERB.new(File.open('tweet-template.svg.erb').read)
-  scope = TemplateScope.new('dave', 'dave', 'tomorrow', tweet)
-  tweet_svg = template.result scope.get_binding
-  tweet_file = File.open('tweet.svg','w')
-  tweet_file.write( tweet_svg )
-  tweet_file.close
-  %x(convert tweet.svg -resize 80% -rotate 90 -threshold 50% tweet.png)
-  puts %x(sudo python print-image.py tweet.png)
+puts "Connecting to twitter:"
+client.filter(track: '#architecture, #bigquestions') do |tweet|
+  puts tweet.text, tweet.user.name
+  if tweet.text.include? '#architecture' and tweet.text.include? '#bigquestions'
+    scope = TemplateScope.new(tweet.user.name, tweet.user.screen_name, tweet.created_at.getutc.getlocal("+10:00").to_s[0..-7], tweet.text)
+    template = ERB.new(File.open('tweet-template.svg.erb').read)
+    tweet_svg = template.result scope.get_binding
+    tweet_file = File.open('tweet.svg','w')
+    tweet_file.write( tweet_svg )
+    tweet_file.close
+    %x(convert tweet.svg -resize 80% -rotate 90 tweet.png)
+    puts %x(sudo python print-image.py tweet.png)
+  end
 end

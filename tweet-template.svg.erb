@@ -1,9 +1,9 @@
 <% tweet_line_length = 40 %>
-<% @tweet = @tweet.split(' ') %>
-<% tweet_lines_sum = @tweet.inject({ lines: [], current_line: ""}) do |sum,word|
+<% @tweettext = @tweettext.split(' ') %>
+<% tweet_lines_sum = @tweettext.inject({ lines: [], current_line: ""}) do |sum,word|
      if sum[:current_line].length + word.length > tweet_line_length
-       sum[:lines] << sum[:current_line] + ' '
-       sum[:current_line] = word
+       sum[:lines] << sum[:current_line]
+       sum[:current_line] = word + ' '
      else
        sum[:current_line] += word + ' '
      end
@@ -19,7 +19,7 @@
     <text transform="translate(6.51 107.918)" fill="#575656" font-family="Nimbus Sans L" font-size="35">
       @<%= @twittername %>
     </text>
-    <text transform="translate(1244.325 39.29)" font-family="Nimbus Sans L" font-size="35">
+    <text transform="translate(1000 40)" font-family="Nimbus Sans L" font-size="35">
       <%= @date %>
     </text>
     <g fill="none" stroke="#000" stroke-width="3.5" stroke-miterlimit="10">
